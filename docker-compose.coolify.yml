@@ -78,9 +78,12 @@ services:
     networks:
       - nodelabs-network
     depends_on:
-      - mongodb
-      - redis
-      - rabbitmq
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     expose:
       - "3000"
     labels:
