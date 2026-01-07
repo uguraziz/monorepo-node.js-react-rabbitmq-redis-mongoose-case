@@ -7,7 +7,16 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   
   mongo: {
-    uri: process.env.MONGO_URI || 'mongodb://localhost:27017/nodelabs',
+    uri: process.env.MONGO_URI || (() => {
+      const username = process.env.MONGO_INITDB_ROOT_USERNAME || 'nodelabs';
+      const password = process.env.MONGO_INITDB_ROOT_PASSWORD || '';
+      const database = process.env.MONGO_INITDB_DATABASE || 'nodelabs';
+      const host = process.env.MONGO_HOST || 'mongodb';
+      if (password) {
+        return `mongodb://${username}:${password}@${host}:27017/${database}?authSource=admin`;
+      }
+      return `mongodb://${host}:27017/${database}`;
+    })(),
   },
   
   redis: {
@@ -17,7 +26,12 @@ export const config = {
   },
   
   rabbitmq: {
-    uri: process.env.RABBITMQ_URI || 'amqp://admin:admin@localhost:5672',
+    uri: process.env.RABBITMQ_URI || (() => {
+      const user = process.env.RABBITMQ_DEFAULT_USER || 'admin';
+      const pass = process.env.RABBITMQ_DEFAULT_PASS || 'admin';
+      const host = process.env.RABBITMQ_HOST || 'rabbitmq';
+      return `amqp://${user}:${pass}@${host}:5672`;
+    })(),
   },
   
   jwt: {
