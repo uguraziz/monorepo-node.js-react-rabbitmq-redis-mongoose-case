@@ -47,8 +47,64 @@ services:
     expose:
       - "5672"
       - "15672"
+    labels:
+      - "coolify.port=15672"
+      - "coolify.name=rabbitmq"
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: ${PORT:-3000}
+      NODE_ENV: ${NODE_ENV:-production}
+      MONGO_URI: ${MONGO_URI:-mongodb://${MONGO_INITDB_ROOT_USERNAME:-nodelabs}:${MONGO_INITDB_ROOT_PASSWORD:-change-me}@mongodb:27017/${MONGO_INITDB_DATABASE:-nodelabs}?authSource=admin}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-change-me}
+      RABBITMQ_URI: ${RABBITMQ_URI:-amqp://${RABBITMQ_DEFAULT_USER:-admin}:${RABBITMQ_DEFAULT_PASS:-change-me}@rabbitmq:5672}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-your-access-secret}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-your-refresh-secret}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+    networks:
+      - nodelabs-network
+    depends_on:
+      - mongodb
+      - redis
+      - rabbitmq
+    expose:
+      - "3000"
+    labels:
+      - "coolify.port=3000"
+      - "coolify.name=api"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      - nodelabs-network
+    depends_on:
+      - api
+    expose:
+      - "80"
+    labels:
+      - "coolify.port=80"
+      - "coolify.name=web"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
