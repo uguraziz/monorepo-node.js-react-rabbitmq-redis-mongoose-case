@@ -1,0 +1,33 @@
+{
+  "name": "@nodelabs/api",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "ajv-formats": "^3.0.1",
+    "amqplib": "^0.10.3",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "helmet": "^7.1.0",
+    "ioredis": "^5.3.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.0",
+    "morgan": "^1.10.0",
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.2.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0"
+  }
+}
+
