@@ -1,4 +1,4 @@
-# Nodelabs Case Study - TaskBoard
+# Case Study - TaskBoard
 
 ## 📋 Proje Özeti
 
